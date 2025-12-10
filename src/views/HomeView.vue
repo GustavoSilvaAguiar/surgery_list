@@ -39,7 +39,9 @@
     </v-navigation-drawer>
 
     <v-main class="main_wrap">
-      <div class="content_wrap"><RouterView /></div>
+      <div class="content_wrap">
+        <div class="content"><RouterView /></div>
+      </div>
     </v-main>
   </v-layout>
 </template>
@@ -68,7 +70,12 @@ const isMobile = smAndDown
     width: 95%;
     height: 90%;
     border-radius: 24px;
-    overflow: auto;
+
+    .content {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
   }
 }
 </style>
