@@ -6,9 +6,22 @@
       density="compact"
       v-model="filters.nomeMedicoPaciente"
     />
-    <BtnComponentVue prepend-icon="mdi-magnify" color="terciary" :onclick="loadSurgeryList"> Buscar </BtnComponentVue>
-    <BtnComponentVue prepend-icon="mdi-filter" color="secondary">Filtro</BtnComponentVue>
-    <BtnComponentVue prepend-icon="mdi-filter-off">Limpar Filtros</BtnComponentVue>
+    <BtnComponentVue prepend-icon="mdi-magnify" color="terciary" :onclick="loadSurgeryList">
+      Buscar
+    </BtnComponentVue>
+    <BtnComponentVue
+      prepend-icon="mdi-filter"
+      color="secondary"
+      @click="filterDialog = !filterDialog"
+      >Filtros</BtnComponentVue
+    >
+
+    <BtnComponentVue
+      prepend-icon="mdi-filter-off"
+      :disabled="!hasActiveFilters"
+      @click="clearFilters"
+      >Limpar Filtros</BtnComponentVue
+    >
   </div>
 
   <v-data-table-server
@@ -20,61 +33,68 @@
     class="elevation-3"
   >
     <template #item.dataCriacao="{ value }">
-      {{
-        new Date(value).toLocaleDateString('pt-BR') +
-        ' ' +
-        new Date(value).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-      }}
+      {{ new Date(value).toLocaleDateString('pt-BR') }}
     </template>
   </v-data-table-server>
+
+  <SideDrawerComponentVue v-model="filterDialog" title="Filtros">
+    <div class="drawer_content">
+      <InputTextComponentVue title="Paciente" density="compact" v-model="filters.paciente" />
+      <InputTextComponentVue title="Médico" density="compact" v-model="filters.medico" />
+      <InputTextComponentVue
+        type="date"
+        title="Data de Nascimento"
+        v-model="filters.dataNascimento"
+      />
+      <InputTextComponentVue
+        type="date"
+        title="Data Criação (Início)"
+        v-model="filters.dataCriacaoInicio"
+      />
+      <InputTextComponentVue
+        type="date"
+        title="Data Criação (Fim)"
+        v-model="filters.dataCriacaoFim"
+      />
+    </div>
+    <template #footer>
+      <div class="drawer_footer">
+        <BtnComponentVue @click="filterDialog = false"> Cancelar </BtnComponentVue>
+
+        <BtnComponentVue
+          color="primary"
+          @click="
+            () => {
+              loadSurgeryList()
+              filterDialog = false
+            }
+          "
+        >
+          Aplicar
+        </BtnComponentVue>
+      </div>
+    </template>
+  </SideDrawerComponentVue>
 </template>
 
 <script setup lang="ts">
 import BtnComponentVue from '@/components/BtnComponent.vue'
 import InputTextComponentVue from '@/components/InputTextComponent.vue'
-import type IFilter from '@/interfaces/filterInterface'
-import type ISurgeryListItem from '@/interfaces/surgeryListItemInterface'
-import surgeryService from '@/services/Surgery/surgeryService'
-import { onMounted, ref, watch } from 'vue'
+import { useSurgeryListComposable } from '../composable/surgeryListComposable'
+import SideDrawerComponentVue from '@/components/SideDrawerComponent.vue'
 
-const options = ref({
-  page: 1,
-  itemsPerPage: 10,
-})
-
-const loading = ref(false)
-const surgeryList = ref<ISurgeryListItem[]>([])
-const totalItems = ref(0)
-
-const filters = ref<IFilter>({
-  page: 1,
-  limit: 5,
-})
-
-async function loadSurgeryList() {
-  loading.value = true
-
-  filters.value.page = options.value.page
-  filters.value.limit = options.value.itemsPerPage
-
-  const res = await surgeryService.getSurgeryList(filters.value)
-
-  surgeryList.value = res.items
-  totalItems.value = res.total
-
-  loading.value = false
-}
-
-onMounted(loadSurgeryList)
-
-watch(options, loadSurgeryList, { deep: true })
-
-const headers = [
-  { title: 'ID', key: 'id' },
-  { title: 'Médico', key: 'medico.nome' },
-  { title: 'Paciente', key: 'paciente.nome' },
-  { title: 'Data de Criação', key: 'dataCriacao' },
-]
+const {
+  options,
+  loading,
+  surgeryList,
+  filterDialog,
+  totalItems,
+  filters,
+  headers,
+  hasActiveFilters,
+  loadSurgeryList,
+  clearFilters,
+} = useSurgeryListComposable()
 </script>
 
 <style scoped lang="scss">
@@ -85,5 +105,16 @@ const headers = [
   margin-bottom: 16px;
   align-items: center;
   justify-content: flex-end;
+}
+
+.drawer_content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.drawer_footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 </style>
