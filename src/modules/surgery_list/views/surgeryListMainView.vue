@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/valid-v-slot -->
 <template>
+  <PageTitleComponentVue>Agendamentos</PageTitleComponentVue>
   <div class="content_header_wrap">
     <InputTextComponentVue
       title="Buscar Paciente/Médico"
@@ -121,6 +122,7 @@ import { useSurgeryListComposable } from '../composable/surgeryListComposable'
 import SideDrawerComponentVue from '@/components/SideDrawerComponent.vue'
 import ModalComponentVue from '@/components/ModalComponent.vue'
 import RowInfoComponentVue from '@/components/RowInfoComponent.vue'
+import PageTitleComponentVue from '@/components/PageTitleComponent.vue'
 
 const {
   options,

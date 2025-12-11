@@ -6,6 +6,7 @@ import options from './plugins/vuetoastificationPlugin'
 import Toast from 'vue-toastification'
 import App from './App.vue'
 import router from './router'
+import '@/plugins/chartjs'
 
 const app = createApp(App)
 
