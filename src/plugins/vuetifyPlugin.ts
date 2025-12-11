@@ -3,10 +3,16 @@ import '@mdi/font/css/materialdesignicons.css'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { createVuetify } from 'vuetify'
+import { pt } from 'vuetify/locale'
+
 
 const vuetify = createVuetify({
   components,
   directives,
+  locale: {
+    locale: 'pt',
+    messages: {pt}
+  },
   icons: {
     defaultSet: 'mdi',
   },
@@ -15,8 +21,9 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: '#E7F3EC',
-          secondary: '#14AE5C',
+          primary: '#079DDF',
+          secondary: '#067EB2',
+          terciary: '#1CB5F8',
         },
       },
     },

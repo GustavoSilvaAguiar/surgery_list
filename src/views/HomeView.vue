@@ -3,7 +3,9 @@
     <v-app-bar density="comfortable" app>
       <v-app-bar-nav-icon v-if="isMobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Minha Aplicação</v-toolbar-title>
+      <v-toolbar-title>
+        <img src="https://finxapp.com.br/wp-content/uploads/2025/07/group.webp" height="35px" />
+      </v-toolbar-title>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -31,15 +33,16 @@
 
       <v-divider></v-divider>
 
-      <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-home-city" title="Home" value="home" />
-        <v-list-item prepend-icon="mdi-account" title="My Account" value="account" />
-        <v-list-item prepend-icon="mdi-account-group-outline" title="Users" value="users" />
+      <v-list density="compact" nav :value="route.path">
+        <v-list-item prepend-icon="mdi-home" to="/" title="Home" value="/" exact  />
+        <v-list-item prepend-icon="mdi-chart-areaspline" to="/dashboard" title="Dashboard" value="/dashboard" />
       </v-list>
     </v-navigation-drawer>
 
     <v-main class="main_wrap">
-      <div class="content_wrap"><RouterView /></div>
+      <div class="content_wrap">
+        <div class="content"><RouterView /></div>
+      </div>
     </v-main>
   </v-layout>
 </template>
@@ -47,6 +50,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const drawer = ref(true)
 const rail = ref(true)
@@ -68,7 +74,12 @@ const isMobile = smAndDown
     width: 95%;
     height: 90%;
     border-radius: 24px;
-    overflow: auto;
+
+    .content {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+    }
   }
 }
 </style>
