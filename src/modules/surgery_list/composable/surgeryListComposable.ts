@@ -2,18 +2,20 @@ import { ref, onMounted, watch, computed } from 'vue'
 import surgeryService from '@/services/Surgery/surgeryService'
 import type IFilter from '@/interfaces/filterInterface'
 import type ISurgeryListItem from '@/interfaces/surgeryListItemInterface'
-import { fi } from 'vuetify/locale'
 
 export function useSurgeryListComposable() {
   const options = ref({
     page: 1,
     itemsPerPage: 10,
+    sortBy: [] as { key: string; order: 'asc' | 'desc' }[],
   })
-
   const loading = ref<boolean>(false)
   const surgeryList = ref<ISurgeryListItem[]>([])
   const totalItems = ref(0)
   const filterDialog = ref<boolean>(false)
+  const modalDialog = ref<boolean>(false)
+  const isReady = ref<boolean>(false)
+  const itemDetail = ref<ISurgeryListItem>({} as ISurgeryListItem)
 
   const hasActiveFilters = computed(() => {
     return (
@@ -53,7 +55,7 @@ export function useSurgeryListComposable() {
 
     filters.value.page = options.value.page
     filters.value.limit = options.value.itemsPerPage
-
+    filters.value.sortBy = options.value.sortBy
     const res = await surgeryService.getSurgeryList(filters.value)
 
     surgeryList.value = res.items
@@ -62,15 +64,49 @@ export function useSurgeryListComposable() {
     loading.value = false
   }
 
-  onMounted(loadSurgeryList)
+  const getIdade = (dataNascimento: string | Date): number => {
+    const dataNasc = new Date(dataNascimento)
+    const hoje = new Date()
 
-  watch(options, loadSurgeryList, { deep: true })
+    let idade = hoje.getFullYear() - dataNasc.getFullYear()
+    const mes = hoje.getMonth() - dataNasc.getMonth()
+
+    if (mes < 0 || (mes === 0 && hoje.getDate() < dataNasc.getDate())) {
+      idade--
+    }
+
+    return idade
+  }
+
+  const showItemDetail = (item: ISurgeryListItem) => {
+    itemDetail.value = item
+    modalDialog.value = !modalDialog.value
+  }
+
+  onMounted(async () => {
+    options.value.sortBy = [{ key: 'dataCriacao', order: 'asc' }]
+
+    await loadSurgeryList()
+
+    isReady.value = true
+  })
+
+  watch(
+    options,
+    () => {
+      if (!isReady.value) return
+      loadSurgeryList()
+    },
+    { deep: true },
+  )
 
   const headers = [
-    { title: 'ID', key: 'id' },
-    { title: 'Médico', key: 'medico.nome' },
-    { title: 'Paciente', key: 'paciente.nome' },
-    { title: 'Data de Criação', key: 'dataCriacao' },
+    { title: 'ID', key: 'id', sortable: true },
+    { title: 'Paciente', key: 'paciente.nome', sortable: true },
+    { title: 'Idade', key: 'paciente.dataNascimento', sortable: true },
+    { title: 'Médico', key: 'medico.nome', sortable: true },
+    { title: 'Data de Criação', key: 'dataCriacao', sortable: true },
+    { title: 'Ações', key: 'actions' },
   ]
 
   return {
@@ -81,8 +117,12 @@ export function useSurgeryListComposable() {
     filters,
     headers,
     filterDialog,
+    modalDialog,
     hasActiveFilters,
+    itemDetail,
     loadSurgeryList,
     clearFilters,
+    getIdade,
+    showItemDetail,
   }
 }

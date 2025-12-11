@@ -3,7 +3,7 @@
     {
       "id": 1,
       "medico": { "nome": "Afonso Silva" },
-      "paciente": { "nome": "Gustavo Santos", "dataNascimento": "2023-08-21" },
+      "paciente": { "nome": "Gustavo Santos", "dataNascimento": "1999-10-04" },
       "dataCriacao": "2024-09-20T12:00:00Z"
     },
     {

@@ -7,4 +7,8 @@ export default interface IFilter {
   dataCriacaoFim?: Date
   page?: number
   limit?: number
+  sortBy?: Array<{
+    key: string
+    order: 'asc' | 'desc'
+  }>
 }

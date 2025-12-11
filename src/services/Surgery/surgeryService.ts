@@ -23,12 +23,18 @@ class SurgeryService {
 
           _page: filters.page,
           _limit: filters.limit,
+
+          ...(filters.sortBy &&
+            filters.sortBy.length > 0 && {
+              _sort: filters.sortBy[0]?.key,
+              _order: filters.sortBy[0]?.order,
+            }),
         },
       })
 
       return {
         items: response.data,
-        total: Number(response.headers['x-total-count']) || 0
+        total: Number(response.headers['x-total-count']) || 0,
       }
     } catch (error) {
       throw error
