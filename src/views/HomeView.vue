@@ -3,7 +3,9 @@
     <v-app-bar density="comfortable" app>
       <v-app-bar-nav-icon v-if="isMobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
 
-      <v-toolbar-title>Minha Aplicação</v-toolbar-title>
+      <v-toolbar-title>
+        <img src="https://finxapp.com.br/wp-content/uploads/2025/07/group.webp" height="35px"/>
+      </v-toolbar-title>
     </v-app-bar>
 
     <v-navigation-drawer
